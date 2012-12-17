@@ -81,4 +81,15 @@ void ServerListener::GetSocketByName(QAbstractSocket *socket,
     }
     qDebug()<<__FUNCDNAME__<<"can't find it!";
 }
+void ServerListener::MakeEveryKnow(struct User *user)
+{
+    for(int i=0;i<MAXCONNECTION;i++)
+    {
+        if(clients[i]!=NULL)
+        {
+            reader->SendUser(clients[i],user);
+        }
+    }
+
+}
 

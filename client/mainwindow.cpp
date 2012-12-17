@@ -45,12 +45,20 @@ void MainWindow::newUser(struct User *user)  //向界面里添加新的用户
 }
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)  //双击用户启动游戏
 {
-    /*QStringList argvs;
-    argvs<<item->text()
-         <<map[item->text()]->add.toString()
-         <<QString("%1").arg(map[item->text()]->port)
-         <<QString("%1").arg(TYPE_SERVER);
-    Game = new  QProcess(this);
-    Game->start(PATHTOFIVE,argvs);*/
-    //ServerSocket->Send_Game_Req(item->text());
+    struct User *temp;
+    temp = map[item->text()];
+    QString program = "";
+    QStringList arguments;
+    arguments << "IP" <<"Port" << MyName;
+    Game = new QProcess(this);
+    Game->start(program,arguments);
+    if (!Game->waitForStarted())
+    {
+        qDebug()<<__FUNCTION__<<"start fail\n";
+    }
+
+    Game->waitForFinished(-1);
+    if(Game->exitCode())
+    {
+    }
 }

@@ -14,7 +14,7 @@ class ServerListener : public QObject
     Q_OBJECT
 public:
     explicit ServerListener(QObject *parent = 0);
-    
+    void MakeEveryKnow(struct User *user);
 signals:
     void hasNewData(QAbstractSocket *,UserList *);//发送信号给PackageReader进行解析
     

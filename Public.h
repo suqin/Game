@@ -12,15 +12,17 @@
 #define MAXBUFFSIZE 1024  //最长消息长度
 #define MAX_STR_LEN 20
 
-#define SUCCEED 1
-#define FAULT 0
+#define SUCCEED 0
+#define FAULT 1
 
 #define CMD_LOGIN 2
 #define CMD_GET_LIST 3
-#define CMD_GAME_REQ 7
+#define CMD_GAME_REQ 4
+#define CMD_DEL_USER 5
 
-#define VAL_USER 4
+
+#define VAL_USER 6
 
 
-#define TYPE_CLIENT 6
-#define TYPE_SERVER 5
+#define TYPE_CLIENT 7
+#define TYPE_SERVER 8

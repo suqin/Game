@@ -99,7 +99,7 @@ void Tcp::hasNewDate()
             hasNewUser();
             break;
         case CMD_GAME_REQ:
-            //break;
+            break;
 
         }
     }

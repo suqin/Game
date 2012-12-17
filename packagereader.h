@@ -12,8 +12,10 @@ class PackageReader : public QObject
 public:
     explicit PackageReader(QObject *parent = 0);
     bool Login();
-    int SendList();
-    int GameRequest();
+    int SendLists();
+    void SendUser(QAbstractSocket *socket,struct User *user);
+    void DeleteUser(QAbstractSocket *socket, QString &user);
+    //int GameRequest();
 signals:
     void GetSocketByName(QAbstractSocket *socket,QString name);
 public slots:

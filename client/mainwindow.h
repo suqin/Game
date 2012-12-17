@@ -30,6 +30,7 @@ private:
     Tcp *ServerSocket;
     QMap<QString, struct User *> map;
     QProcess *Game;
+    QString MyName;
 };
 
 #endif // MAINWINDOW_H

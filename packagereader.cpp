@@ -20,19 +20,20 @@ void PackageReader::ReadData(QAbstractSocket *socket, UserList *list)
     case CMD_LOGIN:
         if(!Login())
             qDebug()<<"login fault";
-        SendList();
+        SendLists();
         break;
     case CMD_GET_LIST:
-        qDebug()<<SendList();
+        qDebug()<<SendLists();
+
         break;
-    case CMD_GAME_REQ:
-        GameRequest();
-        break;
+    //case CMD_GAME_REQ:
+    //    GameRequest();
+    //    break;
     default:
         break;
     }
 }
-int PackageReader::GameRequest()
+/*int PackageReader::GameRequest()
 {
     QString name;
     int len;
@@ -61,7 +62,7 @@ int PackageReader::GameRequest()
     else
         qDebug()<<__FUNCTION__<<"Goal_Socket==NULL";
     return 0;
-}
+}*/
 
 bool PackageReader::Login()
 {
@@ -109,7 +110,7 @@ bool PackageReader::Login()
     return 1;
 
 }
-int PackageReader::SendList()
+int PackageReader::SendLists()
 {
     QDataStream socketStream;
     socketStream.setVersion(QDataStream::Qt_4_8);
@@ -142,4 +143,37 @@ int PackageReader::SendList()
         count++;
         qDebug()<<__FUNCTION__<<"count"<<count;
    }
+}
+
+void PackageReader::DeleteUser(QAbstractSocket *socket,QString &user)
+{
+    QByteArray data;
+    QDataStream stream(&data,QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_4_8);
+    QDataStream socketStream;
+    socketStream.setVersion(QDataStream::Qt_4_8);
+    socketStream.setDevice(socket);
+    qDebug()<<__FUNCTION__;
+    stream<<VAL_USER
+          <<user.size()
+          <<user;
+    socketStream.writeRawData(data.data(),data.size());
+}
+
+void PackageReader::SendUser(QAbstractSocket *socket, User *user)
+{
+    QByteArray data;
+    QDataStream stream(&data,QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_4_8);
+    QDataStream socketStream;
+    socketStream.setVersion(QDataStream::Qt_4_8);
+    socketStream.setDevice(socket);
+    qDebug()<<__FUNCTION__;
+    stream<<VAL_USER
+          <<user->name.length()
+          <<user->name
+          <<user->add.toIPv4Address()
+          <<user->port
+          <<user->online;
+    socketStream.writeRawData(data.data(),data.size());
 }
