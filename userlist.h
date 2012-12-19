@@ -22,6 +22,7 @@ public:
     struct User *GetUser(int i);
     struct User *Next();
     struct User *FindByName(QString name);
+    struct User *FindBySocket(QTcpSocket *soc);
     void Del(int i);
     int Del(QTcpSocket *socket);
 private:

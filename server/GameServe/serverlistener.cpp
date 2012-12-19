@@ -12,6 +12,7 @@ ServerListener::ServerListener(QObject *parent) :
     if(! (MainServer->listen(QHostAddress::Any,GAMESERVERPORT)) )
         qDebug()<<__FUNCTION__;
     connect(MainServer,SIGNAL(newConnection()),this,SLOT(hasNewConn()));
+    connect(reader,SIGNAL(LogSucceed(User*)),this,SLOT(LogSucceed(User*)));
     connect(this,SIGNAL(hasNewData(QAbstractSocket*,UserList *)),reader,SLOT(ReadData(QAbstractSocket*,UserList *)));
 }
 void ServerListener::hasNewConn()
@@ -55,11 +56,19 @@ void ServerListener::onSocketError(QAbstractSocket::SocketError s)
     {
         if(clients[i]&&clients[i]->error()==s)
         {
+            struct User *user=NULL;
+            user=list->FindBySocket(clients[i]);
             qDebug()<<clients[i]->errorString();
+            for(int j=0;j<MAXCONNECTION;j++)
+            {
+                if(clients[j]!=NULL&&j!=i)
+                    reader->DeleteUser(clients[j],user->name);
+            }
             list->Del(clients[i]);
             clients[i]->close();
             clients[i]->deleteLater();
             clients[i]=NULL;                      //关闭并清除错误的套结字
+
         }
     }
 }
@@ -81,8 +90,14 @@ void ServerListener::GetSocketByName(QAbstractSocket *socket,
     }
     qDebug()<<__FUNCDNAME__<<"can't find it!";
 }
+void ServerListener::LogSucceed(struct User *user)
+{
+    MakeEveryKnow(user);
+}
+
 void ServerListener::MakeEveryKnow(struct User *user)
 {
+    qDebug()<<__FUNCTION__;
     for(int i=0;i<MAXCONNECTION;i++)
     {
         if(clients[i]!=NULL)
@@ -90,6 +105,5 @@ void ServerListener::MakeEveryKnow(struct User *user)
             reader->SendUser(clients[i],user);
         }
     }
-
 }
 

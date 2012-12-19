@@ -77,6 +77,21 @@ UserList::~UserList()
     }
 }
 
+struct User * UserList::FindBySocket(QTcpSocket *socket)
+{
+    for(int i=0;i<MAXCONNECTION;i++)
+    {
+        if(users[i]!=NULL
+           &&users[i]->port==socket->peerPort()
+           &&users[i]->add==socket->peerAddress())
+        {
+            qDebug()<<users[i]->name<<users[i]->port;
+            return users[i];
+        }
+    }
+    return NULL;
+}
+
 struct User * UserList::FindByName(QString name)
 {
     for(int i=0;i<MAXCONNECTION;i++)

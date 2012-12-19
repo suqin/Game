@@ -98,7 +98,8 @@ void Tcp::hasNewDate()
         case VAL_USER:
             hasNewUser();
             break;
-        case CMD_GAME_REQ:
+        case CMD_DEL_USER:
+            DelUser();
             break;
 
         }
@@ -128,4 +129,15 @@ Tcp::~Tcp()
 {
     socket->close();
     delete socket;
+}
+void Tcp::DelUser()
+{
+    int length=0;
+    QString name;
+    stream>>length;
+    name.resize(length);
+    stream>>name;
+    qDebug()<<name;
+    emit delU(name);
+
 }

@@ -21,9 +21,11 @@ signals:
 public slots:
     void hasNewConn();//有新的连接
     void hasData();   //有数据可读
+    void LogSucceed(struct User *user);
     void onSocketError(QAbstractSocket::SocketError s);//错误处理
     void GetSocketByName(QAbstractSocket *socket,QString name);
 private:
+
     QTcpServer *MainServer;                            //主套结字
     QTcpSocket *clients[MAXCONNECTION];                //客户端队列
     PackageReader *reader;                             //数据包解析类

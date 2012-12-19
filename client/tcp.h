@@ -20,8 +20,10 @@ public:
     ~Tcp();
     void hasNewConn();
     void Sed_Game_Req(QString name);
+    void DelUser();
 signals:
     void newUser(struct User *);
+    void delU(QString name);
 public slots:
     void onSocketError(QAbstractSocket::SocketError s);
     void hasNewDate();

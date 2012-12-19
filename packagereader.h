@@ -15,14 +15,14 @@ public:
     int SendLists();
     void SendUser(QAbstractSocket *socket,struct User *user);
     void DeleteUser(QAbstractSocket *socket, QString &user);
-    //int GameRequest();
+
 signals:
     void GetSocketByName(QAbstractSocket *socket,QString name);
+    void LogSucceed(struct User *);
 public slots:
     void ReadData(QAbstractSocket *socket,UserList *);
 
 private:
-    //QDataStream socketStream;
     QAbstractSocket *s;
     UserList *l;
 };

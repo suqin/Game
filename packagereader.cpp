@@ -18,9 +18,13 @@ void PackageReader::ReadData(QAbstractSocket *socket, UserList *list)
     switch (cmd)
     {
     case CMD_LOGIN:
-        if(!Login())
+        if(Login())
+        {
+            SendLists();
+
+        }
+        else
             qDebug()<<"login fault";
-        SendLists();
         break;
     case CMD_GET_LIST:
         qDebug()<<SendLists();
@@ -99,6 +103,7 @@ bool PackageReader::Login()
     user->add=s->peerAddress();
     user->online=1;
     user->port=s->peerPort();
+
     qDebug()<<user->name;
     if(-1==l->Insert(user))
     {
@@ -106,7 +111,9 @@ bool PackageReader::Login()
         socketStream<<FAULT;
         return 0;
     }
+
     socketStream<<SUCCEED;
+    emit LogSucceed(user);
     return 1;
 
 }
@@ -154,7 +161,7 @@ void PackageReader::DeleteUser(QAbstractSocket *socket,QString &user)
     socketStream.setVersion(QDataStream::Qt_4_8);
     socketStream.setDevice(socket);
     qDebug()<<__FUNCTION__;
-    stream<<VAL_USER
+    stream<<CMD_DEL_USER
           <<user.size()
           <<user;
     socketStream.writeRawData(data.data(),data.size());

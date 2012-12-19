@@ -19,6 +19,7 @@
 #define CMD_GET_LIST 3
 #define CMD_GAME_REQ 4
 #define CMD_DEL_USER 5
+#define CMD_ADD_USER 9
 
 
 #define VAL_USER 6
