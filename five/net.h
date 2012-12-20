@@ -8,6 +8,7 @@
 #include <QHostAddress>
 #include <QErrorMessage>
 #include <QMessageBox>
+#include <QString>
 #include <QDebug>
 #include "../Public.h"
 #define PORT 8910

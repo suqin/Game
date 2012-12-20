@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent,
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    //QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     ui->setupUi(this);
     color = COLOR_BLACK;
     connect(this,SIGNAL(click()),this,SLOT(d()));

@@ -3,6 +3,7 @@
 PackageReader::PackageReader(QObject *parent) :
     QObject(parent)
 {
+    db = new Db();
 
 }
 void PackageReader::ReadData(QAbstractSocket *socket, UserList *list)
@@ -30,9 +31,9 @@ void PackageReader::ReadData(QAbstractSocket *socket, UserList *list)
         qDebug()<<SendLists();
 
         break;
-    //case CMD_GAME_REQ:
-    //    GameRequest();
-    //    break;
+    case CMD_REG:
+        Reg();
+        break;
     default:
         break;
     }
@@ -94,10 +95,11 @@ bool PackageReader::Login()
     passwd.resize(passwdLen);
     socketStream>>passwd;
     qDebug()<<"user name"<<name<<"passwd:"<<passwd;
-    /*bala
-     *bala
-     *bala
-     */
+    if(!db->IsMatch(name,passwd))
+    {
+
+        socketStream<<FAULT;
+    }
     user = new struct User;
     user->name=name;
     user->add=s->peerAddress();
@@ -183,4 +185,33 @@ void PackageReader::SendUser(QAbstractSocket *socket, User *user)
           <<user->port
           <<user->online;
     socketStream.writeRawData(data.data(),data.size());
+}
+bool PackageReader::Reg()
+{
+    QDataStream socketStream;
+    socketStream.setVersion(QDataStream::Qt_4_8);
+    socketStream.setDevice(s);
+    struct User *user;
+    int nameLen,passwdLen;
+    QString name,passwd;
+    socketStream>>nameLen;
+    if(nameLen<0||nameLen>MAX_STR_LEN)
+    {
+        socketStream<<FAULT;
+        return 0;
+    }
+    name.resize(nameLen);
+    socketStream>>name;
+    socketStream>>passwdLen;
+    if(passwdLen<0||passwdLen>MAX_STR_LEN)
+    {
+        socketStream<<FAULT;
+        return 0;
+    }
+    passwd.resize(passwdLen);
+    socketStream>>passwd;
+    qDebug()<<"user name"<<name<<"passwd:"<<passwd;
+    db->Reg(name,passwd);
+    socketStream<<SUCCEED;
+    return true;
 }

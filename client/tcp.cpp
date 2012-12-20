@@ -15,10 +15,13 @@ Tcp::Tcp(QObject *parent) :
 
     }
     if(!socket)
+    {
         qDebug()<<__FUNCTION__<<"error";
+        return ;
+    }
     connect(socket,SIGNAL(error(QAbstractSocket::SocketError)),
             this,SLOT(onSocketError(QAbstractSocket::SocketError)));
-    connect(server,SIGNAL(error(QAbstractSocket::SocketError)),
+    connect(server,SIGNAL(acceptError(QAbstractSocket::SocketError)),
             this,SLOT(onSocketError(QAbstractSocket::SocketError)));
     /*connect(server,SIGNAL(newConnection()),
             this,SLOT(hasNewConn()));*/
@@ -139,5 +142,27 @@ void Tcp::DelUser()
     stream>>name;
     qDebug()<<name;
     emit delU(name);
+}
+bool Tcp::reg(QString &name, QString &passwd)
+{
+    qDebug()<<__FUNCTION__<<"begin";
+    stream.setDevice(socket);
+    int resault;
+    if(!isOpen())
+        return 0;
+    stream<<CMD_REG;
+    stream<<name.length();
+    stream<<name;
+    stream<<passwd.length();
+    stream<<passwd;
+    if(!socket->waitForReadyRead())
+        return 0;
+    stream>>resault;
+    qDebug()<<__FUNCTION__<<resault;
+    if(resault==SUCCEED)
+    {
 
+        return 1;
+    }
+    return 0;
 }

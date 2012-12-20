@@ -22,6 +22,7 @@ public:
     
 private slots:
     void on_login_clicked();
+    void on_reg_clicked();
     void newUser(struct User *);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void DelUser(QString user);

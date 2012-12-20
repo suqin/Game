@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += network
+QT       +=sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = client
@@ -14,13 +15,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ../packagereader.cpp \
     tcp.cpp \
     ../userlist.cpp
 
 HEADERS  += mainwindow.h \
     ../Public.h \
-    ../packagereader.h \
     tcp.h \
     ../userlist.h
 

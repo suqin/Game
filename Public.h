@@ -16,6 +16,7 @@
 #define FAULT 1
 
 #define CMD_LOGIN 2
+#define CMD_REG 10
 #define CMD_GET_LIST 3
 #define CMD_GAME_REQ 4
 #define CMD_DEL_USER 5

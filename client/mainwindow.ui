@@ -100,9 +100,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="exit">
+       <widget class="QPushButton" name="reg">
         <property name="text">
-         <string>退出</string>
+         <string>注册</string>
         </property>
        </widget>
       </item>

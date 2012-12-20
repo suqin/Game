@@ -7,7 +7,7 @@
 QT       += core
 
 QT       -= gui
-
+QT       += sql
 QT       += network
 TARGET = GameServe
 CONFIG   += console
@@ -19,10 +19,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     serverlistener.cpp \
     ../../packagereader.cpp \
-    ../../userlist.cpp
+    ../../userlist.cpp \
+    ../../db.cpp
 
 HEADERS += \
     serverlistener.h \
     ../../packagereader.h \
     ../../Public.h \
-    ../../userlist.h
+    ../../userlist.h \
+    ../../db.h

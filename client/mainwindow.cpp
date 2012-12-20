@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->listWidget->hide();
+    ServerSocket=NULL;
 
 
 }
@@ -19,17 +20,23 @@ MainWindow::~MainWindow()
 void MainWindow::on_login_clicked()   //处理登录按钮
 {
     ui->login->hide();
-    ServerSocket = new Tcp(this);
-    QHostAddress add(GAMESERVERIP);
-    ServerSocket->ConnectTo(&add,GAMESERVERPORT);
-    connect(ServerSocket,SIGNAL(newUser(User*)),this,SLOT(newUser(User*)));
+    qDebug()<<(int) ServerSocket;
+    if(ServerSocket==NULL)
+    {
+        qDebug()<<__FUNCTION__<<"create server socket";
+        ServerSocket = new Tcp(this);
+        QHostAddress add(GAMESERVERIP);
+        ServerSocket->ConnectTo(&add,GAMESERVERPORT);
+        connect(ServerSocket,SIGNAL(newUser(User*)),this,SLOT(newUser(User*)));
+    }
     if(ServerSocket->isOpen())
     {
         MyName = ui->name->text();
         if(!ServerSocket->login(ui->name->text(),ui->passwd->text()))
         {
             ui->info->setText("error");
-            delete ServerSocket;
+            ServerSocket->deleteLater();
+            ServerSocket=NULL;
             ui->login->show();
             return ;
         }
@@ -57,17 +64,11 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)  //双�
     temp = map[item->text()];
     QString program = "";
     QStringList arguments;
-    arguments << "IP" <<"Port" << MyName;
-    Game = new QProcess(this);
-    Game->start(program,arguments);
-    if (!Game->waitForStarted())
-    {
-        qDebug()<<__FUNCTION__<<"start fail\n";
-    }
 
-    Game->waitForFinished(-1);
-    if(Game->exitCode())
+    if(temp->online)
     {
+
+
     }
 }
 
@@ -77,4 +78,28 @@ void MainWindow::DelUser(QString user)
     (ui->listWidget->findItems(user,Qt::MatchExactly).first())->setHidden(1);
     ui->listWidget->update();
     this->update();
+}
+void MainWindow::on_reg_clicked()
+{
+    ui->reg->hide();
+    if(ServerSocket==NULL)
+    {
+        ServerSocket = new Tcp(this);
+        QHostAddress add(GAMESERVERIP);
+        ServerSocket->ConnectTo(&add,GAMESERVERPORT);
+        connect(ServerSocket,SIGNAL(newUser(User*)),this,SLOT(newUser(User*)));
+    }
+    if(ServerSocket->isOpen())
+    {
+        MyName = ui->name->text();
+        if(!ServerSocket->reg(ui->name->text(),ui->passwd->text()))
+        {
+            ui->info->setText("error");
+            delete ServerSocket;
+            ui->reg->show();
+            return ;
+        }
+        ui->info->setText("注册成功");
+
+    }
 }

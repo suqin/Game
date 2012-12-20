@@ -2,7 +2,7 @@
 
 void Net::senddata(QString str)
 {
-    socket->write(str.toAscii());
+    socket->write(str.toUtf8());
 }
 
 Net::Net(QString name, QString add, QString port, QString type)
@@ -55,7 +55,7 @@ void Net::readdata()
     QByteArray buff;
     buff.resize(socket->readBufferSize());
     buff.append(socket->readAll());
-    data=QString::fromAscii(buff.data());
+    data+=(buff.data());
     qDebug()<<buff;
      emit has_data(&data);
 }
@@ -83,15 +83,5 @@ bool Net::connectto(QString add, QString port)
 }
 bool Net::beServer(QString port)
 {
-    /*server = new QTcpServer();
-    if(!server->listen(QHostAddress::Any,PORT))
-    {
-        QMessageBox box;
-        box.setText(QString("请确保端口%1未被使用").arg(PORT));
-        box.exec();
-        server->deleteLater();
-        return 0;
-    }
-    connect(server,SIGNAL(newConnection()),this,SLOT(newTcpConnect()));*/
     return 1;
 }

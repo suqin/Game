@@ -15,6 +15,7 @@ public:
     void ConnectTo(QHostAddress *add,quint16 port);
     bool isOpen();
     bool login(QString &name,QString &passwd);
+    bool reg(QString &name,QString &passwd);
     int hasNewUser();
     QTcpSocket *GetSocket();
     ~Tcp();
