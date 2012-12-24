@@ -1,12 +1,13 @@
 #include <QDebug>
 
-#define PATHTOFIVE "five.exe"
+#define PATHTOGAME "dasd.exe"
 
 #define GAMESERVERIP "127.0.0.1"
 #define DBSERVERIP "127.0.0.1"
 #define GAMESERVERPORT 8910
 #define DBSERVERPORT 8911
 #define GAMEPORT 8912
+#define WAITTIME 5000
 
 #define MAXCONNECTION 10  //最大连接数
 #define MAXBUFFSIZE 1024  //最长消息长度

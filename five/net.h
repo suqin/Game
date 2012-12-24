@@ -8,10 +8,13 @@
 #include <QHostAddress>
 #include <QErrorMessage>
 #include <QMessageBox>
+#include <QDataStream>
+#include <QByteArray>
 #include <QString>
 #include <QDebug>
 #include "../Public.h"
-#define PORT 8910
+
+#define PORT 4321
 
 struct Connection {
     quint16 port;
@@ -22,12 +25,11 @@ class Net :public QObject
 {
     Q_OBJECT
 public:
-    Net(QString name, QString add, QString port,QString type);
+    Net(QString _name, QString IP, QString port, int type);
     void senddata(QString str);
     bool IsListening();
     void listen();
-    bool connectto(QString add, QString port);
-    bool beServer(QString port);
+    bool connectto(QString add, quint16 port);
 public slots:
     void readdata();
     void newTcpConnect();
@@ -37,11 +39,10 @@ signals:
     void has_err(QString );
     void startGame();
 private:
-    /*QUdpSocket *udp;
-    struct Connection conn;*/
     QTcpServer *server;
     QTcpSocket *socket;
     QString data;
+    QString name;
 };
 
 #endif // NET_H

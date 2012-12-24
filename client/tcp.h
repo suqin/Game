@@ -5,6 +5,7 @@
 #include <QtNetwork>
 #include <QDataStream>
 #include <QMessageBox>
+#include <QStringList>
 #include "../userlist.h"
 #include "../Public.h"
 class Tcp : public QObject
@@ -14,17 +15,19 @@ public:
     explicit Tcp(QObject *parent = 0);
     void ConnectTo(QHostAddress *add,quint16 port);
     bool isOpen();
-    bool login(QString &name,QString &passwd);
-    bool reg(QString &name,QString &passwd);
+    bool login(QString name,QString passwd);
+    bool reg(QString name,QString passwd);
     int hasNewUser();
     QTcpSocket *GetSocket();
     ~Tcp();
     void hasNewConn();
     void Sed_Game_Req(QString name);
     void DelUser();
+    void GameReq();
 signals:
     void newUser(struct User *);
     void delU(QString name);
+    void startGame(QStringList *);
 public slots:
     void onSocketError(QAbstractSocket::SocketError s);
     void hasNewDate();

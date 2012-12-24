@@ -23,7 +23,7 @@ public slots:
     void hasData();   //有数据可读
     void LogSucceed(struct User *user);
     void onSocketError(QAbstractSocket::SocketError s);//错误处理
-    void GetSocketByName(QAbstractSocket *socket,QString name);
+    void GetSocketByName(QAbstractSocket *socket, QString *name);
 private:
 
     QTcpServer *MainServer;                            //主套结字

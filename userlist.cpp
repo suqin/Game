@@ -70,7 +70,7 @@ int UserList::Del(QTcpSocket *socket)
 
 UserList::~UserList()
 {
-    for(int i;i<MAXCONNECTION;i++)
+    for(int i=0;i<MAXCONNECTION;i++)
     {
         if(users[i]!=NULL)
             delete users[i];

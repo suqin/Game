@@ -11,7 +11,7 @@ Tcp::Tcp(QObject *parent) :
         QMessageBox box;
         box.setText(QString("请确保端口%1未被使用,无法作为主机").arg(GAMEPORT));
         box.exec();
-        //server->deleteLater();
+        server->deleteLater();
 
     }
     if(!socket)
@@ -28,6 +28,7 @@ Tcp::Tcp(QObject *parent) :
 }
 void Tcp::hasNewConn()
 {
+
 
 
 }
@@ -58,9 +59,13 @@ void Tcp::onSocketError(QAbstractSocket::SocketError s)
         qDebug()<<server->errorString();
 
 }
+void Tcp::Sed_Game_Req(QString name)
+{
+
+}
 
 
-bool Tcp::login(QString &name, QString &passwd)
+bool Tcp::login(QString name, QString passwd)
 {
     qDebug()<<__FUNCTION__<<"begin";
     stream.setDevice(socket);
@@ -103,12 +108,34 @@ void Tcp::hasNewDate()
             break;
         case CMD_DEL_USER:
             DelUser();
+        case CMD_GAME_REQ:
+            GameReq();
             break;
 
         }
     }
 }
 
+void Tcp::GameReq()
+{
+    QStringList *list;
+    QString ip;
+    quint16 port;
+    int len;
+    QString name;
+    stream>>ip>>port>>len;
+    name.resize(len);
+    stream>>name;
+    qDebug()<<ip<<port<<name;
+    list = new QStringList();
+    list->append(name);
+    list->append(ip);
+    list->append(QString("%1").arg(port));
+    list->append(QString("%1").arg(TYPE_CLIENT));
+    emit startGame(list);
+    qDebug()<<__FUNCTION__;
+
+}
 
 int Tcp::hasNewUser()
 {
@@ -143,7 +170,7 @@ void Tcp::DelUser()
     qDebug()<<name;
     emit delU(name);
 }
-bool Tcp::reg(QString &name, QString &passwd)
+bool Tcp::reg(QString name, QString passwd)
 {
     qDebug()<<__FUNCTION__<<"begin";
     stream.setDevice(socket);

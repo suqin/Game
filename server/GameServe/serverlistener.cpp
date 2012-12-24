@@ -4,7 +4,7 @@ ServerListener::ServerListener(QObject *parent) :
     QObject(parent)
 {
     memset(clients,0,sizeof(QTcpSocket *)*MAXCONNECTION);
-    reader = new PackageReader(this);
+    reader = new PackageReader(this,clients);
     MainServer = new QTcpServer(this);
     list = new UserList();
     if(!MainServer)
@@ -12,6 +12,7 @@ ServerListener::ServerListener(QObject *parent) :
     if(! (MainServer->listen(QHostAddress::Any,GAMESERVERPORT)) )
         qDebug()<<__FUNCTION__;
     connect(MainServer,SIGNAL(newConnection()),this,SLOT(hasNewConn()));
+    connect(reader,SIGNAL(GetSocketByName(QAbstractSocket*,QString*)),this,SLOT(GetSocketByName(QAbstractSocket*,QString*)));
     connect(reader,SIGNAL(LogSucceed(User*)),this,SLOT(LogSucceed(User*)));
     connect(this,SIGNAL(hasNewData(QAbstractSocket*,UserList *)),reader,SLOT(ReadData(QAbstractSocket*,UserList *)));
 }
@@ -62,7 +63,10 @@ void ServerListener::onSocketError(QAbstractSocket::SocketError s)
             for(int j=0;j<MAXCONNECTION;j++)
             {
                 if(clients[j]!=NULL&&j!=i)
+                {
+                    qDebug()<<__FUNCTION__<<j;
                     reader->DeleteUser(clients[j],user->name);
+                }
             }
             list->Del(clients[i]);
             clients[i]->close();
@@ -74,10 +78,10 @@ void ServerListener::onSocketError(QAbstractSocket::SocketError s)
 }
 
 void ServerListener::GetSocketByName(QAbstractSocket *socket,
-                                     QString name)
+                                     QString *name)
 {
     struct User *user;
-    user=list->FindByName(name);
+    user=list->FindByName(*name);
     for(int i=0;i<MAXCONNECTION;i++)
     {
         if(clients[i]->peerAddress()==user->add &&

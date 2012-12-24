@@ -1,9 +1,11 @@
 #include "packagereader.h"
 
-PackageReader::PackageReader(QObject *parent) :
+PackageReader::PackageReader(QObject *parent, QTcpSocket **_clients) :
     QObject(parent)
 {
+    clients = _clients;
     db = new Db();
+    //sock=NULL;
 
 }
 void PackageReader::ReadData(QAbstractSocket *socket, UserList *list)
@@ -16,6 +18,7 @@ void PackageReader::ReadData(QAbstractSocket *socket, UserList *list)
     int cmd;
     socketStream>>cmd;
     QString data1,data2;
+    qDebug()<<cmd;
     switch (cmd)
     {
     case CMD_LOGIN:
@@ -34,40 +37,52 @@ void PackageReader::ReadData(QAbstractSocket *socket, UserList *list)
     case CMD_REG:
         Reg();
         break;
+    case CMD_GAME_REQ:
+        GameReq();
+        break;
     default:
         break;
     }
 }
-/*int PackageReader::GameRequest()
+void PackageReader::GameReq()
 {
-    QString name;
-    int len;
-    quint32 ip;
-    quint16 port;
-    QString Goal_Name;
-    QTcpSocket *Goal_Socket=NULL;
+    QTcpSocket *socket=NULL;
     QDataStream socketStream;
     socketStream.setVersion(QDataStream::Qt_4_8);
     socketStream.setDevice(s);
-    socketStream>>len;
-    Goal_Name.resize(len);
-    socketStream>>Goal_Name;
-    socketStream>>ip;
-    socketStream>>port;
-    emit GetSocketByName(Goal_Socket,Goal_Name);
-    if(Goal_Socket!=NULL)
+    int nameLen;
+    QString name;
+    socketStream>>nameLen;
+    name.resize(nameLen);
+    socketStream>>name;
+
+    struct User *user;
+    user=l->FindByName(name);
+    for(int i=0;i<MAXCONNECTION;i++)
     {
-        socketStream.setDevice(Goal_Socket);
-        socketStream<<CMD_GAME_REQ
-                    <<Goal_Name.length()
-                    <<Goal_Name
-                    <<s->peerAddress()
-                    <<s->peerPort();
+        if(clients[i]->peerAddress()==user->add &&
+           clients[i]->peerPort()==user->port)
+        {
+            socket=clients[i];
+            qDebug()<<__FUNCDNAME__<<"find it!";
+            break;
+        }
     }
-    else
-        qDebug()<<__FUNCTION__<<"Goal_Socket==NULL";
-    return 0;
-}*/
+    if(socket!=NULL)
+    {
+            qDebug()<<__FUNCTION__<<name;
+            QDataStream socketStreamToClient;
+            socketStream.setVersion(QDataStream::Qt_4_8);
+            socketStreamToClient.setDevice(socket);
+            socketStreamToClient<<CMD_GAME_REQ
+
+                                <<s->peerAddress().toString()
+                                <<s->peerPort()
+                                <<name.size()
+                               <<name;
+
+    }
+}
 
 bool PackageReader::Login()
 {
@@ -191,7 +206,6 @@ bool PackageReader::Reg()
     QDataStream socketStream;
     socketStream.setVersion(QDataStream::Qt_4_8);
     socketStream.setDevice(s);
-    struct User *user;
     int nameLen,passwdLen;
     QString name,passwd;
     socketStream>>nameLen;

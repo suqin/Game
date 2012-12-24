@@ -9,27 +9,32 @@ MainWindow::MainWindow(QWidget *parent,
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    //QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+
     ui->setupUi(this);
+    //if(type.toInt() == TYPE_SERVER)
     color = COLOR_BLACK;
-    connect(this,SIGNAL(click()),this,SLOT(d()));
+    //else
+    //    color = COLOR_WHITE;
 
     core= new Core();
-    //qDebug()<<type;
-    net = new Net(name,add,port,type);
-    //qDebug()<<"ok1";
+
+    net = new Net(name,add,port,type.toInt());
+    _type=type.toInt();
     player = new Player();
+    connect(this,SIGNAL(click()),this,SLOT(d()));
     connect(net,SIGNAL(has_data(QString*)),
             this,SLOT(rec_data(QString*)));
     connect(net,SIGNAL(has_err(QString)),
             this,SLOT(error(QString)));
-    connect(net,SIGNAL(startGame()),
-            this,SLOT(startGame()));
-   /* if(net->IsListening())
-        ui->label_4->setText("等待链接中...");*/
+    connect(net,SIGNAL(startGame()),this,SLOT(_startGame()));
+    if(_type == TYPE_SERVER)
+        player->setcolor(COLOR_BLACK);
+    else
+        player->setcolor(COLOR_WHITE);
 }
 void MainWindow::mousePressEvent(QMouseEvent *e)
 {
+    ui->label_4->setText(QString("%1--%2").arg(color).arg(player->getColor()));
     if(player->IsMyTurn(color)) {   //轮到当前玩家
         x=e->x();
         y=e->y();
@@ -113,6 +118,7 @@ void MainWindow::rec_data(QString *data) //接受到新数据
     x=data->mid(0,2).toInt();
     y=data->mid(2,2).toInt();
     qDebug()<<"rec"<<x<<y;
+    data->clear();
     emit click();
 }
 void MainWindow::error(QString err)
@@ -123,16 +129,18 @@ void MainWindow::error(QString err)
 
     net->listen();
 }
-void MainWindow::startGame()
+void MainWindow::_startGame()
 {
-    player->setcolor(color);
+    if(_type == TYPE_SERVER)
+        player->setcolor(COLOR_BLACK);
+    else
+        player->setcolor(COLOR_WHITE);
     ui->label_4->setText("GameStart...");
     ui->lineEdit->hide();
     ui->pushButton->hide();
     ui->reset->hide();
     if(player->getColor()==-1)
         player->setcolor(COLOR_BLACK);
-
 }
 MainWindow::~MainWindow()
 {
@@ -143,6 +151,6 @@ MainWindow::~MainWindow()
 }
 void MainWindow::on_pushButton_clicked()
 {
-    if(net->connectto(ui->lineEdit->text()))
-        player->setcolor(COLOR_WHITE);
+    //if(net->connectto())
+       // player->setcolor(COLOR_WHITE);
 }

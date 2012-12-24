@@ -8,8 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->listWidget->hide();
     ServerSocket=NULL;
-
-
+    Game=NULL;
 }
 
 MainWindow::~MainWindow()
@@ -20,13 +19,13 @@ MainWindow::~MainWindow()
 void MainWindow::on_login_clicked()   //处理登录按钮
 {
     ui->login->hide();
-    qDebug()<<(int) ServerSocket;
     if(ServerSocket==NULL)
     {
         qDebug()<<__FUNCTION__<<"create server socket";
         ServerSocket = new Tcp(this);
         QHostAddress add(GAMESERVERIP);
         ServerSocket->ConnectTo(&add,GAMESERVERPORT);
+        connect(ServerSocket,SIGNAL(startGame(QStringList*)),this,SLOT(startGameAsClient(QStringList*)));
         connect(ServerSocket,SIGNAL(newUser(User*)),this,SLOT(newUser(User*)));
     }
     if(ServerSocket->isOpen())
@@ -60,17 +59,45 @@ void MainWindow::newUser(struct User *user)  //向界面里添加新的用户
 }
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)  //双击用户启动游戏
 {
+    if(Game!=NULL)
+        return;
     struct User *temp;
+
     temp = map[item->text()];
+    QString _port=QString("%1").arg(temp->port);
+    QString _type= QString("%1").arg(TYPE_SERVER);
     QString program = "";
     QStringList arguments;
+    arguments.append(temp->name);
+    arguments.append(temp->add.toString());
+    arguments.append(_port);
+    arguments.append(_type);
+    qDebug()<<__FUNCTION__<<arguments;
+    Game = new QProcess(this);
+    Game->start(PATHTOGAME,arguments);
+    connect(Game,SIGNAL(finished(int)),this,SLOT(GameExited(int)));
 
-    if(temp->online)
+}
+void MainWindow::startGameAsClient(QStringList *list)
+{
+    if(Game!=NULL)
+        return;
+    else
     {
-
-
+        qDebug()<<__FUNCTION__<<*list;
+        Game = new QProcess(this);
+        Game->start(PATHTOGAME,*list);
+        connect(Game,SIGNAL(finished(int)),this,SLOT(GameExited(int)));
+        delete list;
     }
 }
+void MainWindow::GameExited(int code)
+{
+    Game->deleteLater();
+    Game = NULL;
+    qDebug()<<__FUNCTION__<<"exited"<<code;
+}
+
 
 void MainWindow::DelUser(QString user)
 {

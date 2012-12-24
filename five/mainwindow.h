@@ -33,12 +33,12 @@ public slots:
     void on_pushButton_clicked();
     void rec_data(QString *);
     void error(QString );
-    void startGame();
+    void _startGame();
 signals:
     void click();
 private:
     Ui::MainWindow *ui;
-    int x,y;
+    int x,y,_type;
     int color;
     QVector<QLabel *> labels;
     Core *core;

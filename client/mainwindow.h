@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QStringList>
 #include <QtNetwork>
 #include <QDataStream>
 #include <QMap>
@@ -26,6 +27,8 @@ private slots:
     void newUser(struct User *);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void DelUser(QString user);
+    void startGameAsClient(QStringList *);
+    void GameExited(int);
 
 private:
     Ui::MainWindow *ui;
