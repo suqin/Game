@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include <QTextCodec>
+
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPainter>
@@ -27,10 +27,10 @@ public:
                         QString type = "5");
     ~MainWindow();
     void mousePressEvent(QMouseEvent *);
-public slots:
-    void d();
     void on_reset_clicked();
     void on_pushButton_clicked();
+public slots:
+    void d();
     void rec_data(QString *);
     void error(QString );
     void _startGame();

@@ -26,17 +26,12 @@ Net::Net(QString _name, QString IP, QString port, int type)
         }
         else
         {
-            box.setText(QString("net error"));
+            box.setText(QString("网络错误"));
             box.exec();
             exit(-1);
         }
         socket->waitForBytesWritten();
         listen();
-
-
-        box.setText(QString("waitint"));
-        box.exec();
-
     }
     else
     {
@@ -45,12 +40,13 @@ Net::Net(QString _name, QString IP, QString port, int type)
         if(!socket->waitForConnected())
         {
             qDebug()<<__FUNCTION__<<"error";
-            box.setText(QString("%1%2").arg(IP,port));
+            box.setText(QString("无法连接到主机"));
             box.exec();
             exit(-2);
         }
+        connect(socket,SIGNAL(readyRead()),this,SLOT(readdata()));
         emit startGame();
-        box.setText(QString("connected"));
+        box.setText(QString("连接成功"));
         box.exec();
 
     }
@@ -64,14 +60,14 @@ void Net::listen()
     if(!server->listen(QHostAddress::Any,PORT))
     {
 
-        box.setText("port not used");
+        box.setText("无法监听端口");
         box.exec();
         return ;
     }
     connect(server,SIGNAL(newConnection()),this,SLOT(newTcpConnect()));
     if(!server->waitForNewConnection(10000))
     {
-        box.setText(QString("no"));
+        box.setText(QString("对方无响应"));
         box.exec();
         exit(-3);
     }
@@ -85,7 +81,7 @@ void Net::newTcpConnect()
     connect(socket,SIGNAL(readyRead()),this,SLOT(readdata()));
     emit startGame();
     QMessageBox box;
-    box.setText("Game Begin");
+    box.setText("游戏开始");
     box.exec();
 
 }

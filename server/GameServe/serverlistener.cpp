@@ -65,10 +65,14 @@ void ServerListener::onSocketError(QAbstractSocket::SocketError s)
                 if(clients[j]!=NULL&&j!=i)
                 {
                     qDebug()<<__FUNCTION__<<j;
-                    reader->DeleteUser(clients[j],user->name);
+                    if(user==NULL)
+                        break;
+                    reader->DeleteUser(clients[j],user->name);//通知客户端删除用户
                 }
             }
+
             list->Del(clients[i]);
+            qDebug()<<__FUNCTION__<<"ok";
             clients[i]->close();
             clients[i]->deleteLater();
             clients[i]=NULL;                      //关闭并清除错误的套结字
@@ -88,11 +92,11 @@ void ServerListener::GetSocketByName(QAbstractSocket *socket,
            clients[i]->peerPort()==user->port)
         {
             socket=clients[i];
-            qDebug()<<__FUNCDNAME__<<"find it!";
+            qDebug()<<__FUNCTION__<<"find it!";
             return ;
         }
     }
-    qDebug()<<__FUNCDNAME__<<"can't find it!";
+    qDebug()<<__FUNCTION__<<"can't find it!";
 }
 void ServerListener::LogSucceed(struct User *user)
 {

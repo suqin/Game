@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent,
     ui(new Ui::MainWindow)
 {
 
+
     ui->setupUi(this);
     //if(type.toInt() == TYPE_SERVER)
     color = COLOR_BLACK;
@@ -34,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent,
 }
 void MainWindow::mousePressEvent(QMouseEvent *e)
 {
-    ui->label_4->setText(QString("%1--%2").arg(color).arg(player->getColor()));
+    //ui->label_4->setText(QString("%1--%2").arg(color).arg(player->getColor()));
     if(player->IsMyTurn(color)) {   //轮到当前玩家
         x=e->x();
         y=e->y();
@@ -106,11 +107,7 @@ void MainWindow::on_reset_clicked() //重置
         delete labels[i];
     labels.clear();
     core->reset();
-    if(ui->label_4->text()!="GameStart...") {
-         ui->lineEdit->show();
-         ui->pushButton->show();
-         ui->reset->show();
-    }
+
 }
 void MainWindow::rec_data(QString *data) //接受到新数据
 {
@@ -123,10 +120,7 @@ void MainWindow::rec_data(QString *data) //接受到新数据
 }
 void MainWindow::error(QString err)
 {
-
-    ui->label_4->setText(err);
     on_reset_clicked();
-
     net->listen();
 }
 void MainWindow::_startGame()
@@ -135,10 +129,6 @@ void MainWindow::_startGame()
         player->setcolor(COLOR_BLACK);
     else
         player->setcolor(COLOR_WHITE);
-    ui->label_4->setText("GameStart...");
-    ui->lineEdit->hide();
-    ui->pushButton->hide();
-    ui->reset->hide();
     if(player->getColor()==-1)
         player->setcolor(COLOR_BLACK);
 }
@@ -148,9 +138,4 @@ MainWindow::~MainWindow()
     delete net;
     delete player;
     delete ui;
-}
-void MainWindow::on_pushButton_clicked()
-{
-    //if(net->connectto())
-       // player->setcolor(COLOR_WHITE);
 }

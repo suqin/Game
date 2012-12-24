@@ -55,6 +55,7 @@ int UserList::Del(QTcpSocket *socket)
     for(int i=0;i<MAXCONNECTION;i++)
     {
         if(users[i]!=NULL
+           &&socket!=NULL
            &&users[i]->port==socket->peerPort()
            &&users[i]->add==socket->peerAddress())
         {

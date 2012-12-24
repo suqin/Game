@@ -17,7 +17,7 @@ public:
     int SendLists();
     void GameReq();
     void SendUser(QAbstractSocket *socket,struct User *user);
-    void DeleteUser(QAbstractSocket *socket, QString &user);
+    void DeleteUser(QAbstractSocket *socket, QString user);
 
 signals:
     void GetSocketByName(QAbstractSocket *socket,QString *name);

@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QTextCodec::codecForName("UTF-8");
     ui->setupUi(this);
     ui->listWidget->hide();
     ServerSocket=NULL;
@@ -33,7 +34,7 @@ void MainWindow::on_login_clicked()   //处理登录按钮
         MyName = ui->name->text();
         if(!ServerSocket->login(ui->name->text(),ui->passwd->text()))
         {
-            ui->info->setText("error");
+            ui->info->setText("登录失败");
             ServerSocket->deleteLater();
             ServerSocket=NULL;
             ui->login->show();
@@ -44,6 +45,7 @@ void MainWindow::on_login_clicked()   //处理登录按钮
         ui->listWidget->show();
     }
     connect(ServerSocket,SIGNAL(delU(QString)),this,SLOT(DelUser(QString)));
+
     //connect()
 
 }

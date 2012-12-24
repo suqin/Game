@@ -64,7 +64,7 @@ void PackageReader::GameReq()
            clients[i]->peerPort()==user->port)
         {
             socket=clients[i];
-            qDebug()<<__FUNCDNAME__<<"find it!";
+            qDebug()<<__FUNCTION__<<"find it!";
             break;
         }
     }
@@ -169,8 +169,10 @@ int PackageReader::SendLists()
    }
 }
 
-void PackageReader::DeleteUser(QAbstractSocket *socket,QString &user)
+void PackageReader::DeleteUser(QAbstractSocket *socket,QString user)
 {
+    if(socket==NULL||!socket->isOpen())
+        return;
     QByteArray data;
     QDataStream stream(&data,QIODevice::WriteOnly);
     stream.setVersion(QDataStream::Qt_4_8);

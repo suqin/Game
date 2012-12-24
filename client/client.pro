@@ -24,3 +24,6 @@ HEADERS  += mainwindow.h \
     ../userlist.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    img.qrc
