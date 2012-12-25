@@ -27,7 +27,9 @@ void MainWindow::on_login_clicked()   //处理登录按钮
         QHostAddress add(GAMESERVERIP);
         ServerSocket->ConnectTo(&add,GAMESERVERPORT);
         connect(ServerSocket,SIGNAL(startGame(QStringList*)),this,SLOT(startGameAsClient(QStringList*)));
+        //将启动游戏信号与启动函数连接起来
         connect(ServerSocket,SIGNAL(newUser(User*)),this,SLOT(newUser(User*)));
+        //将上线信号发给用户窗口
     }
     if(ServerSocket->isOpen())
     {
@@ -40,17 +42,16 @@ void MainWindow::on_login_clicked()   //处理登录按钮
             ui->login->show();
             return ;
         }
-
         ui->widget->hide();
-        ui->listWidget->show();
+        ui->listWidget->show();//显示用户列表窗口
     }
     connect(ServerSocket,SIGNAL(delU(QString)),this,SLOT(DelUser(QString)));
 
     //connect()
 
 }
-
-void MainWindow::newUser(struct User *user)  //向界面里添加新的用户
+//向界面里添加新的用户用户信息由TCP填写
+void MainWindow::newUser(struct User *user)
 {
     if(user->name!=MyName)
     {
@@ -68,7 +69,6 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)  //双�
     temp = map[item->text()];
     QString _port=QString("%1").arg(temp->port);
     QString _type= QString("%1").arg(TYPE_SERVER);
-    QString program = "";
     QStringList arguments;
     arguments.append(temp->name);
     arguments.append(temp->add.toString());
@@ -78,9 +78,10 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)  //双�
     Game = new QProcess(this);
     Game->start(PATHTOGAME,arguments);
     connect(Game,SIGNAL(finished(int)),this,SLOT(GameExited(int)));
+    //游戏的结束信号和处理函数连接
 
 }
-void MainWindow::startGameAsClient(QStringList *list)
+void MainWindow::startGameAsClient(QStringList *list)//list 在Tcp中定义
 {
     if(Game!=NULL)
         return;
@@ -106,12 +107,12 @@ void MainWindow::DelUser(QString user)
 
     (ui->listWidget->findItems(user,Qt::MatchExactly).first())->setHidden(1);
     ui->listWidget->update();
-    this->update();
+    this->update();//刷新
 }
 void MainWindow::on_reg_clicked()
 {
     ui->reg->hide();
-    if(ServerSocket==NULL)
+    if(ServerSocket==NULL) //如果与服务器相连的套接字没有建立
     {
         ServerSocket = new Tcp(this);
         QHostAddress add(GAMESERVERIP);
@@ -125,6 +126,7 @@ void MainWindow::on_reg_clicked()
         {
             ui->info->setText("error");
             delete ServerSocket;
+            ServerSocket=NULL;
             ui->reg->show();
             return ;
         }
